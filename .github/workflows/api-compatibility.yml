@@ -41,31 +41,26 @@ jobs:
         id: run_tests
         if: steps.get_tag.outputs.tag != ''
         continue-on-error: true
-        run: |
-          npm run test
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        run: npm run test
 
       - name: Verify SemVer Contract
-        if: steps.get_tag.outputs.tag != '' && steps.run_tests.outputs.exit_code != '0'
+        if: steps.get_tag.outputs.tag != '' && steps.run_tests.outcome == 'failure'
         run: |
           echo "⚠️ Old tests failed! This indicates a BREAKING CHANGE in the public API."
           echo "Checking PR commits for breaking change indicators..."
 
-          # Get all commit messages in the PR (from the target base branch to HEAD)
           COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --format=%B)
 
           if echo "$COMMITS" | grep -Eq 'BREAKING CHANGE:|!:'; then
-            echo "✅ Breaking change properly marked in commit history ('BREAKING CHANGE:' or '!:' found)."
-            echo "Semantic Release will bump the Major version correctly. Proceeding."
+            echo "✅ Breaking change properly marked ('BREAKING CHANGE:' or '!:' found). Proceeding."
             exit 0
           else
-            echo "❌ ERROR: You introduced a breaking change (old tests failed), but your commits DO NOT include 'BREAKING CHANGE:' or '!:'."
-            echo "To fix this:"
-            echo "  1. If this was intentional, rebase/amend your commits to include the breaking change syntax."
-            echo "  2. If this was an accident, fix the API regression in your code."
+            echo "❌ ERROR: Old tests failed but commits lack 'BREAKING CHANGE:' or '!:'."
+            echo "  1. If intentional: amend commits to include the breaking change syntax."
+            echo "  2. If accidental: fix the API regression in your code."
             exit 1
           fi
 
       - name: Success
-        if: steps.get_tag.outputs.tag == '' || steps.run_tests.outputs.exit_code == '0'
-        run: echo "✅ Backward compatibility verified. Old tests pass flawlessly against new code."
+        if: steps.get_tag.outputs.tag == '' || steps.run_tests.outcome == 'success'
+        run: echo "✅ Backward compatibility verified. Old tests pass against new code."
