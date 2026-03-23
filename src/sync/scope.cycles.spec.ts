@@ -48,6 +48,15 @@ describe('cycles', () => {
     assertThrows(() => scope.resolve('a'), Error, 'Circular dependency detected');
   });
 
+  it('error message includes the full cycle chain', () => {
+    const scope = createScope();
+    scope.set('a', '{{b}}');
+    scope.set('b', '{{c}}');
+    scope.set('c', '{{a}}');
+
+    // The message must show the full path so developers can pinpoint the loop.
+    assertThrows(() => scope.resolve('a'), Error, 'a → b → c → a');
+  });
   it('siblings resolving the same path do not false-positive', () => {
     // Given
     const scope = createScope();

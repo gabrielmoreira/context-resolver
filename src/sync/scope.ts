@@ -167,7 +167,10 @@ export class Scope implements IScope {
     const actualPath = this.interpolatePath(path, options, visitedPaths);
 
     if (visitedPaths.has(actualPath)) {
-      throw new Error(`Circular dependency detected on path: "${actualPath}"`);
+      // Build the full cycle chain for a useful error message:
+      // visited paths are insertion-ordered, so we can reconstruct the loop.
+      const chain = [...visitedPaths, actualPath].join(' → ');
+      throw new Error(`Circular dependency detected: ${chain}`);
     }
     visitedPaths.add(actualPath);
     const opts: ResolveOptions = { ...options, visitedPaths };
