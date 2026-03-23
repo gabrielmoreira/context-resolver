@@ -1,0 +1,83 @@
+{
+  "name": "@gqm/context-resolver",
+  "version": "0.1.0",
+  "description": "Dynamic scoped context and configuration resolver for hierarchical overrides, interpolation, protocols, and structured path-based resolution.",
+  "license": "MIT",
+  "author": {
+    "name": "Gabriel Moreira",
+    "email": "gabrielmoreira@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielmoreira/context-resolver.git"
+  },
+  "homepage": "https://github.com/gabrielmoreira/context-resolver#readme",
+  "bugs": {
+    "url": "https://github.com/gabrielmoreira/context-resolver/issues"
+  },
+  "keywords": [
+    "context",
+    "config",
+    "resolver",
+    "dynamic",
+    "scope",
+    "universal",
+    "browser",
+    "edge",
+    "esm"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "files": ["dist", "src"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./sync": {
+      "types": "./dist/sync/scope.d.ts",
+      "import": "./dist/sync/scope.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "biome check . && tsc -p tsconfig.json --noEmit",
+    "test": "deno test src/**/*.spec.ts",
+    "audit:high": "npm audit --audit-level=high",
+    "prepare": "husky",
+    "release": "semantic-release",
+    "prepublishOnly": "npm run clean && npm run build && npm run check",
+    "pack:preview": "npm pack --dry-run",
+    "git:pre-commit": "lint-staged && npm run lint && npm run typecheck && npm run test",
+    "git:commit-msg": "commitlint --edit"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,md}": ["biome check --write --no-errors-on-unmatched"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "deno": "^2.7.7",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "rimraf": "^6.0.1",
+    "semantic-release": "^25.0.3",
+    "typescript": "^5.7.3"
+  }
+}

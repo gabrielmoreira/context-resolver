@@ -1,0 +1,71 @@
+name: API Regression (Backward Compatibility)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backward-compatibility:
+    name: Check API Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to fetch tags and commit history
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Latest Release Tag
+        id: get_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: Overwrite current tests with previous tests
+        if: steps.get_tag.outputs.tag != ''
+        run: |
+          echo "Checking out tests from ${{ steps.get_tag.outputs.tag }}..."
+          # Restore all spec files from the previous tag
+          git checkout ${{ steps.get_tag.outputs.tag }} -- "src/**/*.spec.ts" || echo "No spec files found in the previous tag."
+
+      - name: Run old tests against new code
+        id: run_tests
+        if: steps.get_tag.outputs.tag != ''
+        continue-on-error: true
+        run: |
+          npm run test
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Verify SemVer Contract
+        if: steps.get_tag.outputs.tag != '' && steps.run_tests.outputs.exit_code != '0'
+        run: |
+          echo "⚠️ Old tests failed! This indicates a BREAKING CHANGE in the public API."
+          echo "Checking PR commits for breaking change indicators..."
+
+          # Get all commit messages in the PR (from the target base branch to HEAD)
+          COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --format=%B)
+
+          if echo "$COMMITS" | grep -Eq 'BREAKING CHANGE:|!:'; then
+            echo "✅ Breaking change properly marked in commit history ('BREAKING CHANGE:' or '!:' found)."
+            echo "Semantic Release will bump the Major version correctly. Proceeding."
+            exit 0
+          else
+            echo "❌ ERROR: You introduced a breaking change (old tests failed), but your commits DO NOT include 'BREAKING CHANGE:' or '!:'."
+            echo "To fix this:"
+            echo "  1. If this was intentional, rebase/amend your commits to include the breaking change syntax."
+            echo "  2. If this was an accident, fix the API regression in your code."
+            exit 1
+          fi
+
+      - name: Success
+        if: steps.get_tag.outputs.tag == '' || steps.run_tests.outputs.exit_code == '0'
+        run: echo "✅ Backward compatibility verified. Old tests pass flawlessly against new code."

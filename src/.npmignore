@@ -1,0 +1,4 @@
+**/*.test.ts
+**/*.spec.ts
+**/__tests__/
+**/*.snap

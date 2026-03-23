@@ -1,0 +1,15 @@
+language: "en-US"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+chat:
+  auto_reply: true
+instructions: |
+  This project uses a Dual Runtime architecture:
+  1. Source code (`src/core`, `src/sync`) is strictly Node.js ESM. Do not suggest Deno-specific APIs here.
+  2. Tests (`*.spec.ts`) run in Deno. Do not suggest Node-specific APIs or npm dependencies for tests.
