@@ -87,12 +87,12 @@ describe('resolve', () => {
   });
 
   it('multi-level fallback', () => {
-    // Given
+    // Given: value lives on root; resolution walks three ancestor hops
     const rootScope = createScope();
     rootScope.set('storage.buckets.assets', 'assets-prod');
     const envScope = createScope({ parent: rootScope });
-    const _userScope = createScope({ parent: envScope });
-    const executionScope = createScope({ parent: rootScope });
+    const userScope = createScope({ parent: envScope });
+    const executionScope = createScope({ parent: userScope });
 
     // When
     const res = executionScope.resolve('storage.buckets.assets');

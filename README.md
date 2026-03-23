@@ -1,5 +1,19 @@
 # @gqm/context-resolver
 
+[![npm version](https://img.shields.io/npm/v/@gqm/context-resolver?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/@gqm/context-resolver)
+[![npm downloads](https://img.shields.io/npm/dw/@gqm/context-resolver?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/@gqm/context-resolver)
+[![CI](https://img.shields.io/github/actions/workflow/status/gabrielmoreira/context-resolver/ci.yml?branch=main&style=flat-square&label=CI&logo=githubactions&logoColor=white)](https://github.com/gabrielmoreira/context-resolver/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/actions/workflow/status/gabrielmoreira/context-resolver/release.yml?branch=main&style=flat-square&label=Release&logo=githubactions&logoColor=white)](https://github.com/gabrielmoreira/context-resolver/actions/workflows/release.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/gabrielmoreira/context-resolver/codeql.yml?branch=main&style=flat-square&label=CodeQL&logo=github)](https://github.com/gabrielmoreira/context-resolver/actions/workflows/codeql.yml)
+[![API Regression](https://img.shields.io/github/actions/workflow/status/gabrielmoreira/context-resolver/api-compatibility.yml?style=flat-square&label=API%20Regression&logo=githubactions&logoColor=white)](https://github.com/gabrielmoreira/context-resolver/actions/workflows/api-compatibility.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![ESM only](https://img.shields.io/badge/ESM-only-f7df1e?style=flat-square&logo=javascript&logoColor=black)](https://nodejs.org/api/esm.html)
+[![Node \u2265 18](https://img.shields.io/node/v/%40gqm%2Fcontext-resolver?style=flat-square&logo=nodedotjs&logoColor=white&color=339933)](https://nodejs.org/)
+[![Biome](https://img.shields.io/badge/code%20style-Biome-60a5fa?style=flat-square&logo=biome&logoColor=white)](https://biomejs.dev)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fa6673?style=flat-square&logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
+[![semantic-release](https://img.shields.io/badge/semantic--release-automated-e10079?style=flat-square&logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+
 A dynamic scoped context and configuration resolver.
 Supports hierarchical overrides, path interpolation, protocols, and structured path-based resolution.
 
