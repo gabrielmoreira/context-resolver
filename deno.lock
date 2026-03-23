@@ -31,7 +31,7 @@
     ],
     "packageJson": {
       "dependencies": [
-        "npm:@biomejs/biome@1.9.4",
+        "npm:@biomejs/biome@^2.4.8",
         "npm:@commitlint/cli@^20.5.0",
         "npm:@commitlint/config-conventional@^20.5.0",
         "npm:@semantic-release/commit-analyzer@^13.0.1",
