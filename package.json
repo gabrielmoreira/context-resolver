@@ -28,7 +28,10 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -63,10 +66,12 @@
     "git:commit-msg": "commitlint --edit"
   },
   "lint-staged": {
-    "*.{js,ts,json,md}": ["biome check --write --no-errors-on-unmatched"]
+    "*.{js,ts,json,md}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^2.4.8",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@semantic-release/commit-analyzer": "^13.0.1",

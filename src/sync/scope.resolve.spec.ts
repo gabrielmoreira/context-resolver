@@ -91,7 +91,7 @@ describe('resolve', () => {
     const rootScope = createScope();
     rootScope.set('storage.buckets.assets', 'assets-prod');
     const envScope = createScope({ parent: rootScope });
-    const userScope = createScope({ parent: envScope });
+    const _userScope = createScope({ parent: envScope });
     const executionScope = createScope({ parent: rootScope });
 
     // When
