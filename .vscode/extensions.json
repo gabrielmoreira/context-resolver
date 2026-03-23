@@ -1,0 +1,4 @@
+{
+  "recommendations": ["biomejs.biome", "denoland.vscode-deno"],
+  "unwantedRecommendations": ["oven.bun-vscode"]
+}
