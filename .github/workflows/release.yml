@@ -38,5 +38,9 @@ jobs:
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # NPM_TOKEN is not needed once npm Trusted Publishing is configured.
+          # See: https://docs.npmjs.com/trusted-publishers
+          # Trusted Publishing uses the id-token permission above (OIDC) to
+          # authenticate with npm without any stored secret.
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run release
