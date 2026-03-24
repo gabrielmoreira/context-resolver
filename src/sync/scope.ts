@@ -1,6 +1,7 @@
 import { parsePath } from '../core/path.js';
 import { treeGet, treeMerge, treeSet } from '../core/tree.js';
 import type {
+  BoundResolveOptions,
   IScope,
   ObjectProtocolHandler,
   ObjectProtocolMatcher,
@@ -62,7 +63,7 @@ export class Scope implements IScope {
       this.objectProtocols.push({
         match: (d): boolean =>
           isPlainObject(d) && typeof (d as Record<string, unknown>).$ref === 'string',
-        handle: (d, opts): unknown => opts.context!.resolve((d as ScopeReference).$ref, opts),
+        handle: (d, opts): unknown => opts.context.resolve((d as ScopeReference).$ref, opts),
       });
     }
 
@@ -110,7 +111,7 @@ export class Scope implements IScope {
 
     const context = options.context ?? this;
     const isEntryPoint = context === this;
-    const opts: ResolveOptions = { ...options, context };
+    const opts: BoundResolveOptions = { ...options, context };
 
     if (isEntryPoint) {
       const cached = this.cache.get(path);
@@ -130,7 +131,7 @@ export class Scope implements IScope {
 
   public resolveValues<T = unknown>(data: unknown, options: ResolveOptions = {}): T {
     const context = options.context ?? this;
-    const opts: ResolveOptions = { ...options, context };
+    const opts: BoundResolveOptions = { ...options, context };
 
     if (Array.isArray(data)) {
       return data.map((item) => this.resolveValues(item, opts)) as unknown as T;
@@ -161,7 +162,7 @@ export class Scope implements IScope {
     return data as T;
   }
 
-  private internalResolve(path: string, options: ResolveOptions): unknown {
+  private internalResolve(path: string, options: BoundResolveOptions): unknown {
     const visitedPaths = options.visitedPaths ?? new Set<string>();
 
     const actualPath = this.interpolatePath(path, options, visitedPaths);
@@ -173,7 +174,7 @@ export class Scope implements IScope {
       throw new Error(`Circular dependency detected: ${chain}`);
     }
     visitedPaths.add(actualPath);
-    const opts: ResolveOptions = { ...options, visitedPaths };
+    const opts: BoundResolveOptions = { ...options, visitedPaths };
 
     try {
       let value = this.getFromStore(actualPath);
@@ -205,12 +206,12 @@ export class Scope implements IScope {
 
   private interpolatePath(
     path: string,
-    options: ResolveOptions,
+    options: BoundResolveOptions,
     visitedPaths: Set<string>,
   ): string {
     if (!path.includes('{{')) return path;
     return path.replace(TEMPLATE_RE, (_match, captured: string) => {
-      const resolved = options.context!.resolve(captured.trim(), {
+      const resolved = options.context.resolve(captured.trim(), {
         ...options,
         visitedPaths,
         optional: true,
@@ -230,7 +231,10 @@ export class Scope implements IScope {
     return treeGet(this.data, segs);
   }
 
-  protected matchObjectProtocol(data: unknown, opts: ResolveOptions): unknown | typeof NOT_MATCHED {
+  protected matchObjectProtocol(
+    data: unknown,
+    opts: BoundResolveOptions,
+  ): unknown | typeof NOT_MATCHED {
     for (const proto of this.objectProtocols) {
       if (proto.match(data)) return proto.handle(data, opts, this.utils);
     }
@@ -241,8 +245,8 @@ export class Scope implements IScope {
     return this.stringProtocols.get(schema) ?? this.parent?.findStringProtocol(schema);
   }
 
-  private interpolateString(str: string, options: ResolveOptions): string {
-    const context = options.context!;
+  private interpolateString(str: string, options: BoundResolveOptions): string {
+    const context = options.context;
     return str.replace(TEMPLATE_RE, (_match, captured: string) => {
       const resolved = context.resolve(captured.trim(), {
         interpolate: true,

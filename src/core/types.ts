@@ -20,7 +20,7 @@ export type ProtocolUtils = {
 
 export type StringProtocolHandler = (
   path: string,
-  options: ResolveOptions,
+  options: BoundResolveOptions,
   utils: ProtocolUtils,
 ) => unknown;
 
@@ -28,7 +28,7 @@ export type ObjectProtocolMatcher = (data: unknown) => boolean;
 
 export type ObjectProtocolHandler = (
   data: unknown,
-  options: ResolveOptions,
+  options: BoundResolveOptions,
   utils: ProtocolUtils,
 ) => unknown;
 
@@ -38,6 +38,15 @@ export interface ResolveOptions {
   context?: IScope;
   visitedPaths?: Set<string>;
 }
+
+/**
+ * Internal narrowing of ResolveOptions used inside the resolution pipeline.
+ * The engine always populates `context` before invoking any protocol handler,
+ * so handlers can rely on it being present without non-null assertions.
+ */
+export type BoundResolveOptions = Omit<ResolveOptions, 'context'> & {
+  readonly context: IScope;
+};
 export type ScopeOptions = {
   parent?: IScope;
   /**

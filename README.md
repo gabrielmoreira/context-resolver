@@ -149,3 +149,26 @@ Check out the **[Advanced Usage Guide](ADVANCED.md)**.
 We love contributions! Please read our **[Contributing Guide](CONTRIBUTING.md)** to learn about our Dual Runtime (Node + Deno) setup, how to run tests, and the workflow to follow.
 
 🤖 **AI Agents:** If you are using Claude, GitHub Copilot, Cursor, or any AI assistant to contribute to this repo, please point it to **[AGENTS.md](AGENTS.md)** as the absolute source of truth.
+
+
+## 🗺️ Roadmap
+
+### Async Scope
+
+Add `resolveAsync(path)` returning a `Promise`, allowing String and Object Protocol handlers to be async. Unlocks use cases like fetching secrets from a remote vault, reading config from the file system, or calling feature-flag APIs as part of resolution.
+
+Open design questions: parallel `AsyncScope` class vs async overloads on `Scope`; how the Epoch Cache handles concurrent resolves.
+
+### Scope Sealing
+
+A `scope.seal()` operation that makes a scope (or specific paths/protocols within it) immutable. Any `set()` after sealing throws a `ScopeSealed` error.
+
+```typescript
+const scope = createScope();
+scope.set('db.host', 'prod-db.example.com');
+scope.seal();
+
+scope.set('db.host', 'other'); // throws: ScopeSealed
+```
+
+Variants under consideration: `seal()` for the whole scope, `seal('path')` for a specific key, `sealProtocols()` to prevent new protocol registrations.
