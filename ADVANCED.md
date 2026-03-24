@@ -48,7 +48,8 @@ scope.registerObjectProtocol(
     const obj = data as { $join: unknown[], sep?: string };
     
     // Crucial: Resolve inner items first so templates/refs inside the array are evaluated
-    const resolvedArray = options.context!.resolveValues<string[]>(obj.$join, options);
+    // context is always populated by the engine before handlers are called — no assertion needed
+    const resolvedArray = options.context.resolveValues<string[]>(obj.$join, options);
     
     return resolvedArray.join(obj.sep ?? '');
   }
@@ -108,7 +109,7 @@ If you set `numericSegmentsAsArrays: true`, the engine treats `0` as an array in
 { "tenants": [ { "slug": "..." } ] }
 ```
 
-*Note: Explicit bracket notation like `tenants[0].slug` or `tenants.[0].slug` ALWAYS produces an array, regardless of this setting.*
+> **⚠ Always-array rule:** Explicit bracket notation — `tenants[0].slug` or `tenants.[0].slug` — **always** produces an array index, regardless of the `numericSegmentsAsArrays` setting. This applies even when the option is `false`.
 
 
 ---
@@ -134,6 +135,6 @@ You can then register your own `$ref` handler (or nothing at all) as needed:
 // Register a custom $ref that resolves only within a specific namespace
 scope.registerObjectProtocol(
   (data) => typeof (data as any).$ref === 'string'
-  (data, opts) => opts.context!.resolve((data as any).$ref, opts)
+  (data, opts) => opts.context.resolve((data as { $ref: string }).$ref, opts)
 );
 ```
