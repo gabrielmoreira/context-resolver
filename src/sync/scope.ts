@@ -28,8 +28,8 @@ interface CacheEntry {
   version: number;
 }
 
-const TEMPLATE_RE = /\{\{([^}]+)\}\}/g;
-const FULL_TEMPLATE_RE = /^\{\{([^}]+)\}\}$/;
+const TEMPLATE_RE = /\{\{([^{}]+)\}\}/g;
+const FULL_TEMPLATE_RE = /^\{\{([^{}]+)\}\}$/;
 const PROTOCOL_RE = /^([a-zA-Z0-9_-]+):(.+)$/;
 
 const NOT_MATCHED: unique symbol = Symbol('NOT_MATCHED');
